@@ -8,7 +8,7 @@ This library does not support tones or multi-pronunciation characters, since Roc
 Build
 -----
 
-Download [Unihan.zip](http://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip), extract the file Unihan_Readings.txt and execute `make`.
+Download [Unihan.zip](http://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip), extract the file `Unihan_Readings.txt` and execute `make`.
 
 License
 -------
