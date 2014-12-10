@@ -22,7 +22,7 @@ def strip_pinyin_tones(pinyin):
 
 def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     ucs_gte, ucs_lte = int(ucs_gte, 16), int(ucs_lte, 16)
-    sys.stdout.write('static struct char_data_t %s = {\n' % identifier)
+    sys.stdout.write('static const struct rocapinyin::char_data_t %s = {\n' % identifier)
     pinyin_table = {}
     with open(fn_readings, "r") as file_readings:
         for line in file_readings:
@@ -38,13 +38,13 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
         ucs_lt = max(pinyin_table_subset)+1
     else:
         ucs_lt = ucs_gte
-    sys.stdout.write('    0x%x, 0x%x,\n    {\n' % (ucs_gte, ucs_lt))
+    sys.stdout.write('    0x%x, 0x%x,\n    (const char *[]) {\n' % (ucs_gte, ucs_lt))
     for idx in range(ucs_gte, ucs_lt):
         if idx in pinyin_table_subset:
             sys.stdout.write('        "%s",\n' % pinyin_table_subset[idx])
         else:
             sys.stdout.write('        nullptr,\n')
-    sys.stdout.write('    }\n}\n')
+    sys.stdout.write('    }\n};\n')
 
 if __name__ == '__main__':
     sys.exit(main(*sys.argv))
