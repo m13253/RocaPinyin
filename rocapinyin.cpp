@@ -50,7 +50,7 @@ std::string getpinyin(const std::string &utf8str, bool strict = false) {
         RS_TRANSCRIPTION
     } result_state = RS_WHITESPACE;
     const auto append_result = [&](uint32_t ucs, std::initializer_list<char> fallback) {
-        if(ucs == '\0' || ucs == '\n' || ucs == '\r' || ucs == '\t') {
+        if(ucs == ' ' || ucs == '\n' || ucs == '\r' || ucs == '\t' || ucs == '\0') {
             result.append(fallback);
             result_state = RS_WHITESPACE;
         } else {
