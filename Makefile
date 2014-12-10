@@ -6,6 +6,12 @@ override CXXFLAGS:=-std=c++11 -Wall -Wextra -O3 -flto $(CXXFLAGS)
 
 all: rocapinyin
 
+clean:
+	rm -rf cache
+
+distclean:
+	rm -f cache/Unihan_Readings.txt cache/Unihan_Variants.txt
+
 Unihan.zip:
 	wget -c -O Unihan.zip.part http://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip
 	mv Unihan.zip.part Unihan.zip
