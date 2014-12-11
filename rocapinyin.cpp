@@ -1,11 +1,7 @@
 #include <cstddef>
-#include <cstdio>
 #include <initializer_list>
-#include <iostream>
-#include <sstream>
 #include <stdexcept>
 #include <string>
-#include <unistd.h>
 
 namespace rocapinyin {
 
@@ -114,18 +110,4 @@ std::string getpinyin(const std::string &utf8str, bool strict = false) {
     return result;
 }
 
-}
-
-int main() {
-    while(std::cin) {
-        if(isatty(fileno(stdin)))
-            std::cerr << "> " << std::flush;
-        std::stringstream linebuf;
-        if(std::cin.get(*linebuf.rdbuf())) {
-            std::cout << rocapinyin::getpinyin(linebuf.str()) << std::endl;
-        }
-        char c;
-        std::cin.get(c); /* bypass \n */
-    }
-    return 0;
 }
