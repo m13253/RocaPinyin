@@ -7,6 +7,7 @@ import unicodedata
 
 REGEX_PINYIN = re.compile('[a-z\u0304\u0301\u030c\u0300]+')
 REGEX_TONE = re.compile('[\u0304\u0301\u030c\u0300]')
+REGEX_UCS = re.compile('U\\+[0-9A-F]+')
 
 
 def find_pinyin(pinyin):
@@ -31,9 +32,15 @@ def strip_pinyin_tones(pinyin):
     return REGEX_TONE.sub('', pinyin)
 
 
+def parse_variant(desc):
+    for i in REGEX_UCS.finditer(desc):
+        yield int(i.group(0)[2:], 16)
+
+
 def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     ucs_gte, ucs_lte = int(ucs_gte, 16), int(ucs_lte, 16)
     sys.stdout.write('static const struct rocapinyin::char_data_t %s = {\n' % identifier)
+
     pinyin_table = {}
     with open(fn_readings, "r") as file_readings:
         for line in file_readings:
@@ -51,13 +58,30 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
                 if ucs not in pinyin_table:
                     pinyin_table[ucs] = (3,)
                 pinyin_table[ucs] = min(pinyin_table[ucs], (2, strip_pinyin_tones(find_pinyin(line[2]))))
+
     variant_table = {}
+    with open(fn_variants, "r") as file_variants:
+        for line in file_variants:
+            line = line.split('\t', 2)
+            if not line[0].startswith('U+'):
+                continue
+            ucs = int(line[0][2:], 16)
+            if ucs not in variant_table:
+                variant_table[ucs] = [[], [], [], [], []]
+            index = {'kZVariant': 0, 'kSimplifiedVariant': 1, 'kTraditionalVariant': 2, 'kSemanticVariant': 3, 'kSpecializedSemanticVariant': 4}.get(line[1])
+            if index is not None:
+                variant_table[ucs][index] = list(parse_variant(line[2]))
+
+    pinyin_unavailable = [ucs for ucs in variant_table if ucs not in pinyin_table]
+    pinyin_unavailable.sort()
+
     pinyin_table_subset = {key: value[1] for key, value in pinyin_table.items() if ucs_gte <= key <= ucs_lte}
     if pinyin_table_subset:
         ucs_gte = min(pinyin_table_subset)
         ucs_lt = max(pinyin_table_subset)+1
     else:
         ucs_lt = ucs_gte
+
     sys.stdout.write('    0x%x, 0x%x,\n    (const char *[]) {\n' % (ucs_gte, ucs_lt))
     for idx in range(ucs_gte, ucs_lt):
         if idx in pinyin_table_subset:
