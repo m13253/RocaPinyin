@@ -59,6 +59,8 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     sys.stdout.write('static const struct rocapinyin::char_data_t %s = {\n' % identifier)
 
     pinyin_table = {}
+    variant_table = {}
+
     with open(fn_readings, "r") as file_readings:
         for line in file_readings:
             line = line.split('\t', 2)
@@ -67,16 +69,21 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
             ucs = int(line[0][2:], 16)
             if line[1] == 'kHanyuPinyin':
                 if ucs not in pinyin_table:
-                    pinyin_table[ucs] = (3,)
+                    pinyin_table[ucs] = (4,)
                 pinyin_table[ucs] = min(pinyin_table[ucs], (1, strip_pinyin_tones(find_pinyin(line[2]))))
             elif line[1] == 'kMandarin':
-                pinyin_table[ucs] = (0, strip_pinyin_tones(normalize_pinyin(line[2])))
+                if ucs not in pinyin_table:
+                    pinyin_table[ucs] = (4,)
+                pinyin_table[ucs] = min(pinyin_table[ucs], (0, strip_pinyin_tones(normalize_pinyin(line[2]))))
             elif line[1] == 'kXHC1983':
                 if ucs not in pinyin_table:
-                    pinyin_table[ucs] = (3,)
+                    pinyin_table[ucs] = (4,)
                 pinyin_table[ucs] = min(pinyin_table[ucs], (2, strip_pinyin_tones(find_pinyin(line[2]))))
+            elif line[1] == 'kDefinition':
+                if ucs not in variant_table:
+                    variant_table[ucs] = [[], [], [], [], [], []]
+                variant_table[ucs][5] = list(parse_variant(line[2]))
 
-    variant_table = {}
     with open(fn_variants, "r") as file_variants:
         for line in file_variants:
             line = line.split('\t', 2)
@@ -84,8 +91,8 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
                 continue
             ucs = int(line[0][2:], 16)
             if ucs not in variant_table:
-                variant_table[ucs] = [[], [], [], [], []]
-            index = {'kZVariant': 0, 'kSimplifiedVariant': 1, 'kTraditionalVariant': 2, 'kSemanticVariant': 3, 'kSpecializedSemanticVariant': 4}.get(line[1])
+                variant_table[ucs] = [[], [], [], [], [], []]
+            index = {'kZVariant': 0, 'kSimplifiedVariant': 1, 'kTraditionalVariant': 2, 'kSemanticVariant': 3, 'kSpecializedSemanticVariant': 4, 'kDefinition': 5}.get(line[1])
             if index is not None:
                 variant_table[ucs][index] = list(parse_variant(line[2]))
 
