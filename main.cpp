@@ -23,8 +23,9 @@
 #include "rocapinyin.h"
 
 int main() {
+    bool stdin_isatty = !!isatty(fileno(stdin));
     while(std::cin) {
-        if(isatty(fileno(stdin)))
+        if(stdin_isatty)
             std::cerr << "> " << std::flush;
         std::string line;
         if(std::getline(std::cin, line))

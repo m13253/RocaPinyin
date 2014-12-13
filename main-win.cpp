@@ -23,14 +23,16 @@
 #include <cstdio>
 #include <iostream>
 #include <string>
-#include <unistd.h>
+#include <windows.h>
 #include <libwintf8.h> /* https://github.com/m13253/libWinTF8 */
 #include "rocapinyin.h"
 
 int main() {
     WTF8::SetConsoleFont _;
+    DWORD dummy;
+    bool stdin_isatty = !!GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &dummy);
     while(WTF8::cin) {
-        if(isatty(fileno(stdin)))
+        if(stdin_isatty)
             WTF8::cerr << "> " << std::flush;
         WTF8::u8string line;
         if(std::getline(WTF8::cin, line)) {
