@@ -54,6 +54,23 @@ def parse_variant(desc):
         yield int(i.group(0)[2:], 16)
 
 
+def push_result(result, previous, file_out):
+    if result is not None:
+        width = 8+sum(map(len, previous))+len(previous)*2+len(result)
+        if width >= 78:
+            file_out.write(' '*8)
+            file_out.write(', '.join(previous))
+            file_out.write(',\n')
+            del previous[:]
+        previous.append(result)
+    else:
+        if previous:
+            file_out.write(' '*8)
+            file_out.write(', '.join(previous))
+            file_out.write('\n')
+            del previous[:]
+
+
 def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     logging.basicConfig(format='%(message)s', level=logging.INFO)
 
@@ -152,11 +169,14 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
         ucs_lt = ucs_gte
 
     sys.stdout.write('    0x%x, 0x%x,\n    (const char *[]) {\n' % (ucs_gte, ucs_lt))
+    output_previous = []
     for idx in range(ucs_gte, ucs_lt):
         if idx in pinyin_table_subset:
-            sys.stdout.write('        "%s",\n' % pinyin_table_subset[idx])
+            push_result('"%s"' % pinyin_table_subset[idx], output_previous, sys.stdout)
         else:
-            sys.stdout.write('        nullptr,\n')
+            push_result('nullptr', output_previous, sys.stdout)
+    push_result(None, output_previous, sys.stdout)
+    assert not output_previous
     sys.stdout.write('    }\n};\n')
 
 if __name__ == '__main__':
