@@ -28,6 +28,7 @@
 #include "rocapinyin.h"
 
 int main() {
+    WTF8::SetConsoleFont _;
     while(WTF8::cin) {
         if(isatty(fileno(stdin)))
             WTF8::cerr << "> " << std::flush;

@@ -3,7 +3,7 @@
 AR=ar
 CXX=c++
 LD=$(CXX)
-override CXXFLAGS:=-std=c++11 -Wall -Wextra -O3 -flto $(CXXFLAGS)
+override CXXFLAGS:=-std=c++11 -Wall -Wextra -O3 -flto -fuse-linker-plugin $(CXXFLAGS)
 
 all: rocapinyin librocapinyin.a
 
