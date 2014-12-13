@@ -10,6 +10,12 @@ Build
 
 Download [Unihan.zip](http://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip) and execute `make`.
 
+You will get an executable named `rocapinyin` and a static library named `librocapinyin.a`.
+
+GCC option `-O3 -flto` is specified and should also be set when linking against `librocapinyin.a`
+
+For Windows users with buggy Unicode I/O support, use `main-win.cpp` instead `main.cpp` and link against [libWinTF8](https://github.com/m13253/libWinTF8).
+
 License
 -------
 

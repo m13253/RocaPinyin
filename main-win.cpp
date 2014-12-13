@@ -17,7 +17,7 @@
 */
 
 #ifndef _WIN32
-#error main-win.cpp is patched for Microsoft Windows with buggy Unicode IO support, use main.cpp for other OSes.
+#error main-win.cpp is patched for Microsoft Windows with buggy Unicode I/O support, use main.cpp for other OSes.
 #endif
 
 #include <cstdio>
