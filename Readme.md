@@ -1,5 +1,3 @@
-# This program is not finished. Please come back days later.
-
 RocaPinyin
 ==========
 
