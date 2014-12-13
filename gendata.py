@@ -83,7 +83,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     sys.stdout.write('''/*
   Copyright (C) 1991-2014 Unicode, Inc. All rights reserved.
   Distributed under the Terms of Use in 
-  http://www.unicode.org/copyright.html.
+  http://www.unicode.org/copyright.html .
 
   Data converted by StarBrilliant.
   Copyright (C) 2014 StarBrilliant <m13253@hotmail.com>
