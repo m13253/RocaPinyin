@@ -28,7 +28,7 @@
 #include "rocapinyin.h"
 
 int main() {
-    WTF8::SetConsoleFont _;
+    WTF8::SetConsoleFont set_console_font;
     DWORD dummy;
     bool stdin_isatty = !!GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &dummy);
     while(WTF8::cin) {
