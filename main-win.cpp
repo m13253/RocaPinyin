@@ -34,7 +34,7 @@ int main() {
             WTF8::cerr << "> " << std::flush;
         WTF8::u8string line;
         if(std::getline(WTF8::cin, line)) {
-            if(line == WTF8::u8string("\x04\r") || line == WTF8::u8string("\x1a\r")
+            if(line == WTF8::u8string("\x04\r") || line == WTF8::u8string("\x1a\r"))
                 break;
             WTF8::cout << rocapinyin::getpinyin(line) << std::endl;
         }
