@@ -22,6 +22,11 @@ import sys
 import unicodedata
 
 
+if sys.version_info < (3,):
+    sys.stderr.write('This script requires Python 3 or higher version.\n')
+    sys.exit(1)
+
+
 REGEX_PINYIN = re.compile('[a-z\u0304\u0301\u030c\u0300]+')
 REGEX_TONE = re.compile('[\u0304\u0301\u030c\u0300]')
 REGEX_UCS = re.compile('\\bU\\+[0-9A-F]+\\b')
