@@ -39,6 +39,56 @@ struct char_data_t {
 #include "cache/char_cjk_compsup.h"
 
 const char *getpinyin(uint32_t ucs) {
+    switch(ucs) {
+    case 0xb7:
+    case 0x30fb:
+        return "\xC2\xB7";
+    case 0x2014:
+    case 0x30fc:
+        return "-";
+    case 0x2018:
+    case 0x3008:
+    case 0x300c:
+        return "\xE2\x80\x98";
+    case 0x2019:
+    case 0x3009:
+    case 0x300d:
+        return "\xE2\x80\x99";
+    case 0x201c:
+    case 0x300e:
+    case 0x300a:
+        return "\xE2\x80\x9C";
+    case 0x201d:
+    case 0x300f:
+    case 0x300b:
+        return "\xE2\x80\x9D";
+    case 0x3000:
+        return " ";
+    case 0x3001:
+        return ",";
+    case 0x3002:
+        return ".";
+    case 0x3007:
+        return "ling";
+    case 0x3010:
+    case 0x3014:
+    case 0x3016:
+        return "[";
+    case 0x3011:
+    case 0x3015:
+    case 0x3017:
+        return "]";
+    case 0x301c:
+        return "~";
+    }
+    const auto convert_halfwidth = [](uint32_t ucs) -> const char * {
+        static char halfwidth_cache[192] = { 0 };
+        if(!halfwidth_cache[(ucs-0xff00)*2])
+            halfwidth_cache[(ucs-0xff00)*2] = ucs-0xfee0;
+        return halfwidth_cache+(ucs-0xff00)*2;
+    };
+    if(ucs > 0xff00 && ucs < 0xff5f)
+        return convert_halfwidth(ucs);
     for(const struct char_data_t &block : {
         char_cjk_main, char_cjk_exta, char_cjk_extb, char_cjk_extc, char_cjk_extd, char_cjk_exte, char_cjk_comp, char_cjk_compsup
     })
