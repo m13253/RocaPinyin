@@ -16,10 +16,13 @@ struct char_data_t {
 #include "cache/char_cjk_extb.h"
 #include "cache/char_cjk_extc.h"
 #include "cache/char_cjk_extd.h"
+#include "cache/char_cjk_exte.h"
+#include "cache/char_cjk_comp.h"
+#include "cache/char_cjk_compsup.h"
 
 const char *getpinyin(uint32_t ucs) {
     for(const struct char_data_t &block : {
-        char_cjk_main, char_cjk_exta, char_cjk_extb, char_cjk_extc, char_cjk_extd
+        char_cjk_main, char_cjk_exta, char_cjk_extb, char_cjk_extc, char_cjk_extd, char_cjk_exte, char_cjk_comp, char_cjk_compsup
     })
         if(ucs >= block.ucs_gte && ucs < block.ucs_lt)
             return block.pinyin[ucs-block.ucs_gte];

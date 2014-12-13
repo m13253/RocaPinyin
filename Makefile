@@ -39,6 +39,15 @@ cache/char_cjk_extc.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variant
 cache/char_cjk_extd.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variants.txt
 	./gendata.py char_cjk_extd 2B740 2B81F cache/Unihan_Readings.txt cache/Unihan_Variants.txt > $@
 
+cache/char_cjk_exte.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variants.txt
+	./gendata.py char_cjk_exte 2B820 2CEAF cache/Unihan_Readings.txt cache/Unihan_Variants.txt > $@
+
+cache/char_cjk_comp.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variants.txt
+	./gendata.py char_cjk_comp F900 FAFF cache/Unihan_Readings.txt cache/Unihan_Variants.txt > $@
+
+cache/char_cjk_compsup.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variants.txt
+	./gendata.py char_cjk_compsup 2F800 2FA1F cache/Unihan_Readings.txt cache/Unihan_Variants.txt > $@
+
 rocapinyin: main.o rocapinyin.o
 	$(LD) $(CXXFLAGS) $(LDFLAGS) -o $@ $^ $(LIB)
 
@@ -47,5 +56,5 @@ librocapinyin.a: rocapinyin.o
 
 main.o: main.cpp rocapinyin.h
 
-rocapinyin.o: rocapinyin.cpp cache/char_cjk_main.h cache/char_cjk_exta.h cache/char_cjk_extb.h cache/char_cjk_extc.h cache/char_cjk_extd.h
+rocapinyin.o: rocapinyin.cpp cache/char_cjk_main.h cache/char_cjk_exta.h cache/char_cjk_extb.h cache/char_cjk_extc.h cache/char_cjk_extd.h cache/char_cjk_exte.h cache/char_cjk_comp.h cache/char_cjk_compsup.h
 

@@ -72,8 +72,22 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
             if index is not None:
                 variant_table[ucs][index] = list(parse_variant(line[2]))
 
-    pinyin_unavailable = [ucs for ucs in variant_table if ucs not in pinyin_table]
-    pinyin_unavailable.sort()
+    variant_entry_maxlen = 0
+    for variant_entry in variant_table.values():
+        variant_entry_maxlen = max(variant_entry_maxlen, max(map(len, variant_entry)))
+
+    for variant_type in range(5):
+        for variant_index in range(variant_entry_maxlen):
+            flag = True
+            while flag:
+                flag = False
+                pinyin_variant_available = [key for key in variant_table.keys() if key in pinyin_table]
+                pinyin_variant_available.sort()
+                for ucs in pinyin_variant_available:
+                    variant_entry = variant_table[ucs][variant_type]
+                    if len(variant_entry) > variant_index and variant_entry[variant_index] not in pinyin_table:
+                        pinyin_table[variant_entry[variant_index]] = (3, pinyin_table[ucs][1] + '*')
+                        flag = True
 
     pinyin_table_subset = {key: value[1] for key, value in pinyin_table.items() if ucs_gte <= key <= ucs_lte}
     if pinyin_table_subset:
