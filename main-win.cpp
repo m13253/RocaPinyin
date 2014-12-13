@@ -32,12 +32,9 @@ int main() {
     while(WTF8::cin) {
         if(isatty(fileno(stdin)))
             WTF8::cerr << "> " << std::flush;
-        std::stringstream linebuf;
-        if(WTF8::cin.get(*linebuf.rdbuf())) {
-            WTF8::cout << rocapinyin::getpinyin(linebuf.str()) << std::endl;
-        }
-        char c;
-        WTF8::cin.get(c); /* bypass \n */
+        WTF8::u8string line;
+        if(std::getline(WTF8::cin, line))
+            WTF8::cout << rocapinyin::getpinyin(line) << std::endl;
     }
     return 0;
 }

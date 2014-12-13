@@ -27,12 +27,9 @@ int main() {
     while(std::cin) {
         if(isatty(fileno(stdin)))
             std::cerr << "> " << std::flush;
-        std::stringstream linebuf;
-        if(std::cin.get(*linebuf.rdbuf())) {
-            std::cout << rocapinyin::getpinyin(linebuf.str()) << std::endl;
-        }
-        char c;
-        std::cin.get(c); /* bypass \n */
+        std::string line;
+        if(std::getline(std::cin, line))
+            std::cout << rocapinyin::getpinyin(line) << std::endl;
     }
     return 0;
 }

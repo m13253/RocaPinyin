@@ -119,7 +119,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
                     variant_table[ucs] = [[], [], [], [], [], []]
                 variant_table[ucs][5] = list(parse_variant(line[2]))
 
-    logging.info('Stage 2: reading character variantation data from Unihan_Variants.txt')
+    logging.info('Stage 2: reading character variation data from Unihan_Variants.txt')
     with open(fn_variants, "r") as file_variants:
         for line in file_variants:
             line = line.split('\t', 2)
