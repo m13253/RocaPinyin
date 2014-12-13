@@ -17,11 +17,12 @@ Unihan.zip:
 	wget -c -O Unihan.zip.part http://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip
 	mv Unihan.zip.part Unihan.zip
 
-cache:
-	mkdir cache
+cache/cache:
+	mkdir -p cache
+	touch cache/cache
 
-cache/Unihan_Readings.txt cache/Unihan_Variants.txt: Unihan.zip cache
-	unzip -o -d cache $< ${subst cache/,,$@}
+cache/Unihan_Readings.txt cache/Unihan_Variants.txt: Unihan.zip cache/cache
+	unzip -p $< $(subst cache/,,$@) > $@
 
 cache/char_cjk_main.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variants.txt
 	./gendata.py char_cjk_main 4E00 9FFF cache/Unihan_Readings.txt cache/Unihan_Variants.txt > $@
