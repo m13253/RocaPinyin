@@ -16,14 +16,15 @@
 # License along with this program.  If not,
 # see <http://www.gnu.org/licenses/>.
 
-import sys
+import logging
 import re
+import sys
 import unicodedata
 
 
 REGEX_PINYIN = re.compile('[a-z\u0304\u0301\u030c\u0300]+')
 REGEX_TONE = re.compile('[\u0304\u0301\u030c\u0300]')
-REGEX_UCS = re.compile('U\\+[0-9A-F]+')
+REGEX_UCS = re.compile('\\bU\\+[0-9A-F]+\\b')
 
 
 def find_pinyin(pinyin):
@@ -54,6 +55,8 @@ def parse_variant(desc):
 
 
 def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
+    logging.basicConfig(format='%(message)s', level=logging.INFO)
+
     ucs_gte, ucs_lte = int(ucs_gte, 16), int(ucs_lte, 16)
     sys.stdout.write('/*\n  Copyright (C) 2014  StarBrilliant <m13253@hotmail.com>\n\n  This program is free software; you can redistribute it and/or\n  modify it under the terms of the GNU Lesser General Public\n  License as published by the Free Software Foundation; either\n  version 3.0 of the License, or (at your option) any later version.\n\n  This program is distributed in the hope that it will be useful,\n  but WITHOUT ANY WARRANTY; without even the implied warranty of\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n  Lesser General Public License for more details.\n\n  You should have received a copy of the GNU Lesser General Public\n  License along with this program.  If not,\n  see <http://www.gnu.org/licenses/>.\n*/\n\n')
     sys.stdout.write('static const struct rocapinyin::char_data_t %s = {\n' % identifier)
@@ -61,6 +64,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     pinyin_table = {}
     variant_table = {}
 
+    logging.info('Stage 1: reading explicit pinyin data from Unihan_Readings.txt')
     with open(fn_readings, "r") as file_readings:
         for line in file_readings:
             line = line.split('\t', 2)
@@ -84,6 +88,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
                     variant_table[ucs] = [[], [], [], [], [], []]
                 variant_table[ucs][5] = list(parse_variant(line[2]))
 
+    logging.info('Stage 2: reading character variantation data from Unihan_Variants.txt')
     with open(fn_variants, "r") as file_variants:
         for line in file_variants:
             line = line.split('\t', 2)
@@ -100,18 +105,44 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     for variant_entry in variant_table.values():
         variant_entry_maxlen = max(variant_entry_maxlen, max(map(len, variant_entry)))
 
-    for variant_type in range(5):
-        for variant_index in range(variant_entry_maxlen):
-            flag = True
-            while flag:
-                flag = False
-                pinyin_variant_available = [key for key in variant_table.keys() if key in pinyin_table]
-                pinyin_variant_available.sort()
-                for ucs in pinyin_variant_available:
-                    variant_entry = variant_table[ucs][variant_type]
-                    if len(variant_entry) > variant_index and variant_entry[variant_index] not in pinyin_table:
-                        pinyin_table[variant_entry[variant_index]] = (3, pinyin_table[ucs][1] + '*')
-                        flag = True
+    stage_count = 2
+    flag1 = True
+    while flag1:
+        flag1 = False
+        stage_count += 1
+        logging.info('Stage %s: inferring pinyin among character variants (forward direction)' % stage_count)
+        for variant_type in range(6):
+            flag2 = True
+            while flag2:
+                flag2 = False
+                for variant_index in range(variant_entry_maxlen):
+                    pinyin_variant_unavailable = [key for key in variant_table.keys() if key not in pinyin_table]
+                    pinyin_variant_unavailable.sort()
+                    for ucs in pinyin_variant_unavailable:
+                        try:
+                            variant_entry = variant_table[ucs][variant_type][variant_index]
+                        except IndexError:
+                            continue
+                        if variant_entry in pinyin_table:
+                            pinyin_table[ucs] = (3, pinyin_table[variant_entry][1])
+                            flag1, flag2 = True, True
+        stage_count += 1
+        logging.info('Stage %s: inferring pinyin among character variants (reversed direction)' % stage_count)
+        for variant_type in range(6):
+            flag2 = True
+            while flag2:
+                flag2 = False
+                for variant_index in range(variant_entry_maxlen):
+                    pinyin_variant_available = [key for key in variant_table.keys() if key in pinyin_table]
+                    pinyin_variant_available.sort()
+                    for ucs in pinyin_variant_available:
+                        try:
+                            variant_entry = variant_table[ucs][variant_type][variant_index]
+                        except IndexError:
+                            continue
+                        if variant_entry not in pinyin_table:
+                            pinyin_table[variant_entry] = (3, pinyin_table[ucs][1])
+                            flag1, flag2 = True, True
 
     pinyin_table_subset = {key: value[1] for key, value in pinyin_table.items() if ucs_gte <= key <= ucs_lte}
     if pinyin_table_subset:
