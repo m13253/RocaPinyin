@@ -80,7 +80,16 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     logging.basicConfig(format='%(message)s', level=logging.INFO)
 
     ucs_gte, ucs_lte = int(ucs_gte, 16), int(ucs_lte, 16)
-    sys.stdout.write('/*\n  Copyright (C) 2014  StarBrilliant <m13253@hotmail.com>\n\n  This program is free software; you can redistribute it and/or\n  modify it under the terms of the GNU Lesser General Public\n  License as published by the Free Software Foundation; either\n  version 3.0 of the License, or (at your option) any later version.\n\n  This program is distributed in the hope that it will be useful,\n  but WITHOUT ANY WARRANTY; without even the implied warranty of\n  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n  Lesser General Public License for more details.\n\n  You should have received a copy of the GNU Lesser General Public\n  License along with this program.  If not,\n  see <http://www.gnu.org/licenses/>.\n*/\n\n')
+    sys.stdout.write('''/*
+  Copyright (C) 1991-2014 Unicode, Inc. All rights reserved.
+  Distributed under the Terms of Use in 
+  http://www.unicode.org/copyright.html.
+
+  Data converted by StarBrilliant.
+  Copyright (C) 2014 StarBrilliant <m13253@hotmail.com>
+*/
+
+''')
     sys.stdout.write('static const struct rocapinyin::char_data_t %s = {\n' % identifier)
 
     pinyin_table = {}
