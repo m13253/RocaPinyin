@@ -22,7 +22,6 @@
 
 #include <cstdio>
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <unistd.h>
 #include <libwintf8.h> /* https://github.com/m13253/libWinTF8 */
