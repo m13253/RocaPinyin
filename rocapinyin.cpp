@@ -26,7 +26,7 @@ namespace rocapinyin {
 struct char_data_t {
     uint32_t ucs_gte;
     uint32_t ucs_lt;
-    const char **pinyin;
+    const char *const *pinyin;
 };
 
 #include "cache/char_cjk_main.h"

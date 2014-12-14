@@ -182,7 +182,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     else:
         ucs_lt = ucs_gte
 
-    sys.stdout.write('    0x%x, 0x%x,\n    (const char *[]) {\n' % (ucs_gte, ucs_lt))
+    sys.stdout.write('    0x%x, 0x%x,\n    (const char *const []) {\n' % (ucs_gte, ucs_lt))
     output_previous = []
     for idx in range(ucs_gte, ucs_lt):
         if idx in pinyin_table_subset:
