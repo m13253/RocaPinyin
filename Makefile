@@ -8,11 +8,12 @@ override CXXFLAGS:=-std=c++11 -Wall -Wextra -O3 -flto -fuse-linker-plugin $(CXXF
 
 all: rocapinyin librocapinyin.a
 
-clean: distclean
+clean:
+	rm -f rocapinyin librocapinyin.a rocapinyin.o main.o
 	rm -rf cache
 
 distclean:
-	rm -f rocapinyin librocapinyin.a rocapinyin.o main.o cache/Unihan_Readings.txt cache/Unihan_Variants.txt
+	rm -f rocapinyin librocapinyin.a rocapinyin.o main.o cache/Unihan_Readings.txt cache/Unihan_Variants.txt Unihan.zip
 
 Unihan.zip:
 	wget -c -O Unihan.zip.part http://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip
