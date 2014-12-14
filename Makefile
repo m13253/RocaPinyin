@@ -1,10 +1,10 @@
 .PHONY: all clean distclean
 
-AR=ar
-CXX=c++
+AR=gcc-ar
+CXX=g++
 LD=$(CXX)
 PYTHON3=python3
-override CXXFLAGS:=-std=c++11 -Wall -Wextra -O3 -flto -fuse-linker-plugin $(CXXFLAGS)
+override CXXFLAGS:=-std=c++11 -Wall -Wextra -O3 -flto -ffat-lto-objects -fuse-linker-plugin $(CXXFLAGS)
 
 all: rocapinyin librocapinyin.a
 
