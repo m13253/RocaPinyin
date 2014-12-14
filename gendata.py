@@ -96,7 +96,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     variant_table = {}
 
     logging.info('Stage 1: reading explicit pinyin data from Unihan_Readings.txt')
-    with open(fn_readings, "r") as file_readings:
+    with open(fn_readings, "r", encoding="utf-8") as file_readings:
         for line in file_readings:
             line = line.split('\t', 2)
             if not line[0].startswith('U+'):
@@ -120,7 +120,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
                 variant_table[ucs][5] = list(parse_variant(line[2]))
 
     logging.info('Stage 2: reading character variation data from Unihan_Variants.txt')
-    with open(fn_variants, "r") as file_variants:
+    with open(fn_variants, "r", encoding="utf-8") as file_variants:
         for line in file_variants:
             line = line.split('\t', 2)
             if not line[0].startswith('U+'):
