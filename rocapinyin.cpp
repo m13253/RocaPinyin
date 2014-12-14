@@ -18,6 +18,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <initializer_list>
 #include <stdexcept>
 #include <string>
@@ -180,6 +181,28 @@ std::string getpinyin(const std::string &utf8str, bool strict = false) {
     }
     result.shrink_to_fit();
     return result;
+}
+
+}
+
+extern "C" {
+
+const char *rocapinyin_getpinyin(uint32_t ucs) {
+    return rocapinyin::getpinyin(ucs);
+}
+
+char *rocapinyin_getpinyin_str(const char *utf8str, int strict) {
+    std::string cppstr = rocapinyin::getpinyin(utf8str, strict != 0);
+    char *cstr = new char[cppstr.length()+1];
+    memcpy(cstr, cppstr.data(), cppstr.length()*sizeof (char));
+    cstr[cppstr.length()+1] = '\0';
+    return cstr;
+}
+
+char *rocapinyin_getpinyin_free(const char *str) {
+    if(str)
+        delete[] str;
+    return nullptr;
 }
 
 }

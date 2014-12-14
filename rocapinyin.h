@@ -16,6 +16,10 @@
   see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef ROCAPINYIN_H_INCLUDED_
+#define ROCAPINYIN_H_INCLUDED_
+#ifdef __cplusplus
+
 #include <cstdint>
 #include <string>
 
@@ -23,3 +27,20 @@ namespace rocapinyin {
 const char *getpinyin(uint32_t ucs);
 std::string getpinyin(const std::string &utf8str, bool strict = false);
 }
+
+extern "C" {
+const char *rocapinyin_getpinyin(uint32_t ucs);
+char *rocapinyin_getpinyin_str(const char *utf8str, int strict);
+char *rocapinyin_getpinyin_free(const char *str);
+}
+
+#else
+
+#include <stdint.h>
+
+const char *rocapinyin_getpinyin(uint32_t ucs);
+char *rocapinyin_getpinyin_str(const char *utf8str, int strict);
+char *rocapinyin_getpinyin_free(const char *str);
+
+#endif
+#endif
