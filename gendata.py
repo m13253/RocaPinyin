@@ -30,11 +30,8 @@ if sys.version_info < (3,):
 REGEX_PINYIN = re.compile('[a-z\u0304\u0301\u030c\u0300]+')
 REGEX_TONE = re.compile('[\u0304\u0301\u030c\u0300]')
 REGEX_UCS = re.compile('\\bU\\+[0-9A-F]+\\b')
-if sys.version_info >= (3, 4):
-    REGEX_PINYIN_FULLMATCH = REGEX_PINYIN
-else:
+if sys.version_info < (3, 4):
     REGEX_PINYIN_FULLMATCH = re.compile('[a-z\u0304\u0301\u030c\u0300]+$')
-    REGEX_PINYIN_FULLMATCH.fullmatch = REGEX_PINYIN_FULLMATCH.match
 
 
 def find_pinyin(pinyin):
@@ -47,14 +44,21 @@ def find_pinyin(pinyin):
 
 def normalize_pinyin(pinyin):
     pinyin = unicodedata.normalize('NFD', pinyin.strip()).replace('u\u0308', 'v').replace('e\u0302', 'eh')
-    pinyin_match = REGEX_PINYIN_FULLMATCH.fullmatch(pinyin)
+    if sys.version_info >= (3, 4):
+        pinyin_match = REGEX_PINYIN.fullmatch(pinyin)
+    else:
+        pinyin_match = REGEX_PINYIN_FULLMATCH.match(pinyin)
     if not pinyin_match:
         raise ValueError('invalid pinyin: %s' % pinyin)
     return pinyin_match.group(0)
 
 
 def strip_pinyin_tones(pinyin):
-    if not REGEX_PINYIN_FULLMATCH.fullmatch(pinyin):
+    if sys.version_info >= (3, 4):
+        pinyin_match = REGEX_PINYIN.fullmatch(pinyin)
+    else:
+        pinyin_match = REGEX_PINYIN_FULLMATCH.match(pinyin)
+    if not pinyin_match:
         raise ValueError('invalid pinyin: %s' % pinyin)
     return REGEX_TONE.sub('', pinyin)
 
