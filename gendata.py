@@ -174,6 +174,16 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
                             pinyin_table[variant_entry] = (3, pinyin_table[ucs][1])
                             flag1, flag2 = True, True
 
+    stage_count += 1
+    logging.info('Stage %s: inferring pinyin among Unicode identical characters' % stage_count)
+    for ucs in range(ucs_gte, ucs_lte+1):
+        if ucs not in pinyin_table or pinyin_table[ucs][0] >= 3:
+            ucs_nfkc = ord(unicodedata.normalize('NFKC', chr(ucs)))
+            if ucs_nfkc in pinyin_table and pinyin_table[ucs_nfkc][0] < 3:
+                pinyin_table[ucs] = pinyin_table[ucs_nfkc]
+
+    stage_count += 1
+    logging.info('Stage %s: generating C++ source code' % stage_count)
     pinyin_table_subset = {ucs for ucs in pinyin_table.keys() if ucs_gte <= ucs <= ucs_lte}
     if pinyin_table_subset:
         ucs_gte = min(pinyin_table_subset)
@@ -183,11 +193,9 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
 
     sys.stdout.write('static const char *const %s_pinyin[] = {\n' % identifier)
     output_previous = []
-    for idx in range(ucs_gte, ucs_lt):
-        if idx not in pinyin_table or pinyin_table[idx][0] >= 3:
-            idx = ord(unicodedata.normalize('NFKC', chr(idx)))
-        if idx in pinyin_table:
-            push_result('"%s"' % pinyin_table[idx][1], output_previous, sys.stdout)
+    for ucs in range(ucs_gte, ucs_lt):
+        if ucs in pinyin_table:
+            push_result('"%s"' % pinyin_table[ucs][1], output_previous, sys.stdout)
         else:
             push_result('nullptr', output_previous, sys.stdout)
     push_result(None, output_previous, sys.stdout)
