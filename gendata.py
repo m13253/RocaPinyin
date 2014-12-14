@@ -174,7 +174,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
                             pinyin_table[variant_entry] = (3, pinyin_table[ucs][1])
                             flag1, flag2 = True, True
 
-    pinyin_table_subset = {key: value[1] for key, value in pinyin_table.items() if ucs_gte <= key <= ucs_lte}
+    pinyin_table_subset = {ucs for ucs in pinyin_table.keys() if ucs_gte <= ucs <= ucs_lte}
     if pinyin_table_subset:
         ucs_gte = min(pinyin_table_subset)
         ucs_lt = max(pinyin_table_subset)+1
@@ -184,8 +184,10 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     sys.stdout.write('static const char *const %s_pinyin[] = {\n' % identifier)
     output_previous = []
     for idx in range(ucs_gte, ucs_lt):
-        if idx in pinyin_table_subset:
-            push_result('"%s"' % pinyin_table_subset[idx], output_previous, sys.stdout)
+        if idx not in pinyin_table or pinyin_table[idx][0] >= 3:
+            idx = ord(unicodedata.normalize('NFKC', chr(idx)))
+        if idx in pinyin_table:
+            push_result('"%s"' % pinyin_table[idx][1], output_previous, sys.stdout)
         else:
             push_result('nullptr', output_previous, sys.stdout)
     push_result(None, output_previous, sys.stdout)
