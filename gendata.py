@@ -61,16 +61,16 @@ def parse_variant(desc):
 
 def push_result(result, previous, file_out):
     if result is not None:
-        width = 8+sum(map(len, previous))+len(previous)*2+len(result)
+        width = 4+sum(map(len, previous))+len(previous)*2+len(result)
         if width >= 78:
-            file_out.write(' '*8)
+            file_out.write(' '*4)
             file_out.write(', '.join(previous))
             file_out.write(',\n')
             del previous[:]
         previous.append(result)
     else:
         if previous:
-            file_out.write(' '*8)
+            file_out.write(' '*4)
             file_out.write(', '.join(previous))
             file_out.write('\n')
             del previous[:]
@@ -90,7 +90,6 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
 */
 
 ''')
-    sys.stdout.write('static const struct rocapinyin::char_data_t %s = {\n' % identifier)
 
     pinyin_table = {}
     variant_table = {}
@@ -182,7 +181,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     else:
         ucs_lt = ucs_gte
 
-    sys.stdout.write('    0x%x, 0x%x,\n    (const char *const []) {\n' % (ucs_gte, ucs_lt))
+    sys.stdout.write('static const char *const %s_pinyin[] = {\n' % identifier)
     output_previous = []
     for idx in range(ucs_gte, ucs_lt):
         if idx in pinyin_table_subset:
@@ -191,7 +190,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
             push_result('nullptr', output_previous, sys.stdout)
     push_result(None, output_previous, sys.stdout)
     assert not output_previous
-    sys.stdout.write('    }\n};\n')
+    sys.stdout.write('};\nstatic const struct rocapinyin::char_data_t %s = {\n    0x%x, 0x%x, %s_pinyin\n};\n' % (identifier, ucs_gte, ucs_lt, identifier))
 
 if __name__ == '__main__':
     sys.exit(main(*sys.argv))
