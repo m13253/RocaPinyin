@@ -17,6 +17,7 @@
 */
 
 #include <cstddef>
+#include <cstdint>
 #include <initializer_list>
 #include <stdexcept>
 #include <string>

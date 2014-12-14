@@ -16,7 +16,7 @@
   see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstddef>
+#include <cstdint>
 #include <string>
 
 namespace rocapinyin {
