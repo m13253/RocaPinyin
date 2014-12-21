@@ -22,16 +22,20 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace rocapinyin {
 const char *getpinyin(uint32_t ucs);
-std::string getpinyin(const std::string &utf8str, bool strict = false);
+std::string getpinyin_str(const std::string &utf8str, bool strict = false);
+std::vector<const char *> getpinyin_vector(const std::string &utf8str, bool strict = false);
 }
 
 extern "C" {
 const char *rocapinyin_getpinyin(uint32_t ucs);
 char *rocapinyin_getpinyin_str(const char *utf8str, int strict);
-char *rocapinyin_getpinyin_free(const char *str);
+char *rocapinyin_getpinyin_str_free(const char *str);
+const char **rocapinyin_getpinyin_vector(const char *utf8str, int strict);
+const char **rocapinyin_getpinyin_vector_free(const char **vec);
 }
 
 #else
@@ -40,7 +44,9 @@ char *rocapinyin_getpinyin_free(const char *str);
 
 const char *rocapinyin_getpinyin(uint32_t ucs);
 char *rocapinyin_getpinyin_str(const char *utf8str, int strict);
-char *rocapinyin_getpinyin_free(const char *str);
+char *rocapinyin_getpinyin_str_free(const char *str);
+const char **rocapinyin_getpinyin_vector(const char *utf8str, int strict);
+const char **rocapinyin_getpinyin_vector_free(const char **vec);
 
 #endif
 #endif

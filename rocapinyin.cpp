@@ -19,9 +19,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <functional>
 #include <initializer_list>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace rocapinyin {
 
@@ -99,44 +101,17 @@ const char *getpinyin(uint32_t ucs) {
     return nullptr;
 }
 
-static bool utf8_check_continuation(const std::string &utf8str, size_t start, size_t check_length) {
-    if(utf8str.size() > start + check_length) {
-        while(check_length--)
-            if((uint8_t(utf8str[++start]) & 0xc0) != 0x80)
-                return false;
-        return true;
-    } else
-        return false;
-}
-
-std::string getpinyin(const std::string &utf8str, bool strict = false) {
-    size_t i = 0;
-    std::string result;
-    result.reserve(utf8str.length()*3);
-    enum {
-        RS_WHITESPACE,
-        RS_TRANSLITERATE,
-        RS_TRANSCRIPTION
-    } result_state = RS_WHITESPACE;
-    const auto append_result = [&](uint32_t ucs, std::initializer_list<char> fallback) {
-        if(ucs == ' ' || ucs == '\n' || ucs == '\r' || ucs == '\t' || ucs == '\0') {
-            result.append(fallback);
-            result_state = RS_WHITESPACE;
-        } else {
-            const char *syllable = getpinyin(ucs);
-            if(syllable != nullptr) {
-                if(result_state != RS_WHITESPACE)
-                    result += ' ';
-                result += syllable;
-                result_state = RS_TRANSLITERATE;
-            } else {
-                if(result_state == RS_TRANSLITERATE)
-                    result += ' ';
-                result.append(fallback);
-                result_state = RS_TRANSCRIPTION;
-            }
-        }
+static void parse_utf8_string(const std::string &utf8str, std::function<void(uint32_t ucs, std::initializer_list<char> fallback)> append_result, bool strict) {
+    const auto utf8_check_continuation = [](const std::string &utf8str, size_t start, size_t check_length) -> bool {
+        if(utf8str.size() > start + check_length) {
+            while(check_length--)
+                if((uint8_t(utf8str[++start]) & 0xc0) != 0x80)
+                    return false;
+            return true;
+        } else
+            return false;
     };
+    size_t i = 0;
     while(i < utf8str.size()) {
         if(uint8_t(utf8str[i]) < 0x80) {
             uint32_t ucs4 = utf8str[i];
@@ -179,6 +154,48 @@ std::string getpinyin(const std::string &utf8str, bool strict = false) {
             ++i;
         }
     }
+}
+
+std::string getpinyin_str(const std::string &utf8str, bool strict = false) {
+    std::string result;
+    result.reserve(utf8str.length()*3);
+    enum {
+        RS_WHITESPACE,
+        RS_TRANSLITERATE,
+        RS_TRANSCRIPTION
+    } result_state = RS_WHITESPACE;
+    const auto append_result = [&](uint32_t ucs, std::initializer_list<char> fallback) {
+        if(ucs == ' ' || ucs == '\n' || ucs == '\r' || ucs == '\t' || ucs == '\0') {
+            result.append(fallback);
+            result_state = RS_WHITESPACE;
+        } else {
+            const char *syllable = getpinyin(ucs);
+            if(syllable != nullptr) {
+                if(result_state != RS_WHITESPACE)
+                    result += ' ';
+                result += syllable;
+                result_state = RS_TRANSLITERATE;
+            } else {
+                if(result_state == RS_TRANSLITERATE)
+                    result += ' ';
+                result.append(fallback);
+                result_state = RS_TRANSCRIPTION;
+            }
+        }
+    };
+    parse_utf8_string(utf8str, append_result, strict);
+    result.shrink_to_fit();
+    return result;
+}
+
+std::vector<const char *> getpinyin_vector(const std::string &utf8str, bool strict = false) {
+    std::vector<const char *> result;
+    result.reserve(utf8str.length()/2);
+    const auto append_result = [&](uint32_t ucs, std::initializer_list<char> fallback) {
+        result.push_back(getpinyin(ucs));
+        static_cast<void>(fallback);
+    };
+    parse_utf8_string(utf8str, append_result, strict);
     result.shrink_to_fit();
     return result;
 }
@@ -192,16 +209,30 @@ const char *rocapinyin_getpinyin(uint32_t ucs) {
 }
 
 char *rocapinyin_getpinyin_str(const char *utf8str, int strict) {
-    std::string cppstr = rocapinyin::getpinyin(utf8str, strict != 0);
+    std::string cppstr = rocapinyin::getpinyin_str(utf8str, strict != 0);
     char *cstr = new char[cppstr.length()+1];
     memcpy(cstr, cppstr.data(), cppstr.length()*sizeof (char));
-    cstr[cppstr.length()+1] = '\0';
+    cstr[cppstr.length()] = '\0';
     return cstr;
 }
 
-char *rocapinyin_getpinyin_free(const char *str) {
+char *rocapinyin_getpinyin_str_free(const char *str) {
     if(str)
         delete[] str;
+    return nullptr;
+}
+
+const char **rocapinyin_getpinyin_vector(const char *utf8str, int strict) {
+    std::vector<const char *> cppvec = rocapinyin::getpinyin_vector(utf8str, strict != 0);
+    const char **cvec = new const char *[cppvec.size()+1];
+    memcpy(cvec, cppvec.data(), cppvec.size()*sizeof (char *));
+    cvec[cppvec.size()] = nullptr;
+    return cvec;
+}
+
+const char **rocapinyin_getpinyin_vector_free(const char **vec) {
+    if(vec)
+        delete[] vec;
     return nullptr;
 }
 

@@ -29,7 +29,7 @@ int main() {
             std::cerr << "> " << std::flush;
         std::string line;
         if(std::getline(std::cin, line))
-            std::cout << rocapinyin::getpinyin(line) << std::endl;
+            std::cout << rocapinyin::getpinyin_str(line) << std::endl;
     }
     return 0;
 }
