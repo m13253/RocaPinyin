@@ -102,7 +102,7 @@ const char *getpinyin(uint32_t ucs) {
     return nullptr;
 }
 
-static void parse_utf8_string(const std::string &utf8str, std::function<void(uint32_t ucs, std::initializer_list<char> fallback)> append_result, bool strict) {
+static void parse_utf8_string(const std::string &utf8str, std::function<void (uint32_t ucs, std::initializer_list<char> fallback)> append_result, bool strict) {
     const auto utf8_check_continuation = [](const std::string &utf8str, size_t start, size_t check_length) -> bool {
         if(utf8str.size() > start + check_length) {
             while(check_length--)
