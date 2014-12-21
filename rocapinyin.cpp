@@ -47,26 +47,26 @@ const char *getpinyin(uint32_t ucs) {
     switch(ucs) {
     case 0xb7:
     case 0x30fb:
-        return "\xC2\xB7";
+        return "\xc2\xb7";
     case 0x2014:
     case 0x30fc:
         return "-";
     case 0x2018:
     case 0x3008:
     case 0x300c:
-        return "\xE2\x80\x98";
+        return "\xe2\x80\x98";
     case 0x2019:
     case 0x3009:
     case 0x300d:
-        return "\xE2\x80\x99";
+        return "\xe2\x80\x99";
     case 0x201c:
     case 0x300e:
     case 0x300a:
-        return "\xE2\x80\x9C";
+        return "\xe2\x80\x9c";
     case 0x201d:
     case 0x300f:
     case 0x300b:
-        return "\xE2\x80\x9D";
+        return "\xe2\x80\x9d";
     case 0x3000:
         return " ";
     case 0x3001:
