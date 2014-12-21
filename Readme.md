@@ -1,7 +1,7 @@
 RocaPinyin
 ==========
 
-A simple Hànzì (Chinese characters) to Hànyǔ Pīnyīn (Chinese reading notations) conversion library, a part of the Rocaloid project.
+A simple Hànzì (Chinese ideographs) to Hànyǔ Pīnyīn (Chinese reading notations) conversion library, a part of the Rocaloid project.
 
 This library does not support tones or multi-pronunciation characters, since Rocaloid does not need them. You can modify this program to suit your needs.
 
