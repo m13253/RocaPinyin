@@ -189,7 +189,7 @@ std::string getpinyin_str(const std::string &utf8str, bool strict) {
     return result;
 }
 
-std::vector<const char *> getpinyin_vector(const std::string &utf8str, bool strict = false) {
+std::vector<const char *> getpinyin_vector(const std::string &utf8str, bool strict) {
     std::vector<const char *> result;
     result.reserve(utf8str.length()/2);
     const auto append_result = [&](uint32_t ucs, std::initializer_list<char> fallback) {
