@@ -193,7 +193,7 @@ std::vector<const char *> getpinyin_vector(const std::string &utf8str, bool stri
     result.reserve(utf8str.length()/2);
     const auto append_result = [&](uint32_t ucs, std::initializer_list<char> fallback) {
         result.push_back(getpinyin(ucs));
-        static_cast<void>(fallback);
+        static_cast<void>(fallback); /* unused */
     };
     parse_utf8_string(utf8str, append_result, strict);
     result.shrink_to_fit();
