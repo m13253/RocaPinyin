@@ -24,6 +24,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include "rocapinyin.h"
 
 namespace rocapinyin {
 
@@ -156,7 +157,7 @@ static void parse_utf8_string(const std::string &utf8str, std::function<void(uin
     }
 }
 
-std::string getpinyin_str(const std::string &utf8str, bool strict = false) {
+std::string getpinyin_str(const std::string &utf8str, bool strict) {
     std::string result;
     result.reserve(utf8str.length()*3);
     enum {
