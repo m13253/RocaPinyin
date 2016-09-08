@@ -94,7 +94,7 @@ const char *getpinyin(uint32_t ucs) {
     };
     if(ucs > 0xff00 && ucs < 0xff5f)
         return convert_halfwidth(ucs);
-    for(const struct char_data_t &block : {
+    for(const char_data_t &block : {
         char_cjk_main, char_cjk_exta, char_cjk_extb, char_cjk_extc, char_cjk_extd, char_cjk_exte, char_cjk_comp, char_cjk_compsup
     })
         if(ucs >= block.ucs_gte && ucs < block.ucs_lt)
