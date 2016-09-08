@@ -43,7 +43,7 @@ def find_pinyin(pinyin):
 
 
 def normalize_pinyin(pinyin):
-    pinyin = unicodedata.normalize('NFD', pinyin.strip()).replace('u\u0308', 'v').replace('e\u0302', 'eh')
+    pinyin = unicodedata.normalize('NFD', pinyin.split()[0]).replace('u\u0308', 'v').replace('e\u0302', 'eh')
     if sys.version_info >= (3, 4):
         pinyin_match = REGEX_PINYIN.fullmatch(pinyin)
     else:
