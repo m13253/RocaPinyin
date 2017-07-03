@@ -70,16 +70,16 @@ def parse_variant(desc):
 
 def push_result(result, previous, file_out):
     if result is not None:
-        width = 4+sum(map(len, previous))+len(previous)*2+len(result)
+        width = 4 + sum(map(len, previous)) + len(previous) * 2 + len(result)
         if width >= 78:
-            file_out.write(' '*4)
+            file_out.write(' ' * 4)
             file_out.write(', '.join(previous))
             file_out.write(',\n')
             del previous[:]
         previous.append(result)
     else:
         if previous:
-            file_out.write(' '*4)
+            file_out.write(' ' * 4)
             file_out.write(', '.join(previous))
             file_out.write('\n')
             del previous[:]
@@ -91,7 +91,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     ucs_gte, ucs_lte = int(ucs_gte, 16), int(ucs_lte, 16)
     sys.stdout.write('''/*
   Copyright (C) 1991-2014 Unicode, Inc. All rights reserved.
-  Distributed under the Terms of Use in 
+  Distributed under the Terms of Use in
   http://www.unicode.org/copyright.html .
 
   Data converted by StarBrilliant.
@@ -155,8 +155,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
             while flag2:
                 flag2 = False
                 for variant_index in range(variant_entry_maxlen):
-                    pinyin_variant_unavailable = [key for key in variant_table.keys() if key not in pinyin_table]
-                    pinyin_variant_unavailable.sort()
+                    pinyin_variant_unavailable = sorted([key for key in variant_table.keys() if key not in pinyin_table])
                     for ucs in pinyin_variant_unavailable:
                         try:
                             variant_entry = variant_table[ucs][variant_type][variant_index]
@@ -172,8 +171,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
             while flag2:
                 flag2 = False
                 for variant_index in range(variant_entry_maxlen):
-                    pinyin_variant_available = [key for key in variant_table.keys() if key in pinyin_table]
-                    pinyin_variant_available.sort()
+                    pinyin_variant_available = sorted([key for key in variant_table.keys() if key in pinyin_table])
                     for ucs in pinyin_variant_available:
                         try:
                             variant_entry = variant_table[ucs][variant_type][variant_index]
@@ -185,7 +183,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
 
     stage_count += 1
     logging.info('Stage %s: inferring pinyin among Unicode identical characters' % stage_count)
-    for ucs in range(ucs_gte, ucs_lte+1):
+    for ucs in range(ucs_gte, ucs_lte + 1):
         if ucs not in pinyin_table or pinyin_table[ucs][0] >= 3:
             ucs_nfkc = ord(unicodedata.normalize('NFKC', chr(ucs)))
             if ucs_nfkc in pinyin_table and pinyin_table[ucs_nfkc][0] < 3:
@@ -196,7 +194,7 @@ def main(_, identifier, ucs_gte, ucs_lte, fn_readings, fn_variants):
     pinyin_table_subset = {ucs for ucs in pinyin_table.keys() if ucs_gte <= ucs <= ucs_lte}
     if pinyin_table_subset:
         ucs_gte = min(pinyin_table_subset)
-        ucs_lt = max(pinyin_table_subset)+1
+        ucs_lt = max(pinyin_table_subset) + 1
     else:
         ucs_lt = ucs_gte
 
