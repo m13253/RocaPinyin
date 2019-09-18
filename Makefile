@@ -4,7 +4,7 @@ AR=gcc-ar
 CXX=g++
 LD=$(CXX)
 PYTHON3=python3
-override CXXFLAGS:=-std=c++11 -Wall -Wextra -O3 -flto -ffat-lto-objects -fuse-linker-plugin $(CXXFLAGS)
+override CXXFLAGS:=-std=c++11 -Wall -Wextra -O3 -flto $(CXXFLAGS)
 
 all: rocapinyin librocapinyin.a
 
@@ -44,6 +44,12 @@ cache/char_cjk_extd.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variant
 cache/char_cjk_exte.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variants.txt
 	$(PYTHON3) gendata.py char_cjk_exte 2B820 2CEAF cache/Unihan_Readings.txt cache/Unihan_Variants.txt > $@
 
+cache/char_cjk_extf.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variants.txt
+	$(PYTHON3) gendata.py char_cjk_extf 2CEB0 2EBEF cache/Unihan_Readings.txt cache/Unihan_Variants.txt > $@
+
+cache/char_cjk_extg.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variants.txt
+	$(PYTHON3) gendata.py char_cjk_extg 30000 3134F cache/Unihan_Readings.txt cache/Unihan_Variants.txt > $@
+
 cache/char_cjk_comp.h: gendata.py cache/Unihan_Readings.txt cache/Unihan_Variants.txt
 	$(PYTHON3) gendata.py char_cjk_comp F900 FAFF cache/Unihan_Readings.txt cache/Unihan_Variants.txt > $@
 
@@ -58,5 +64,5 @@ librocapinyin.a: rocapinyin.o
 
 main.o: main.cpp rocapinyin.h
 
-rocapinyin.o: rocapinyin.cpp cache/char_cjk_main.h cache/char_cjk_exta.h cache/char_cjk_extb.h cache/char_cjk_extc.h cache/char_cjk_extd.h cache/char_cjk_exte.h cache/char_cjk_comp.h cache/char_cjk_compsup.h
+rocapinyin.o: rocapinyin.cpp cache/char_cjk_main.h cache/char_cjk_exta.h cache/char_cjk_extb.h cache/char_cjk_extc.h cache/char_cjk_extd.h cache/char_cjk_exte.h cache/char_cjk_extf.h cache/char_cjk_extg.h cache/char_cjk_comp.h cache/char_cjk_compsup.h
 
